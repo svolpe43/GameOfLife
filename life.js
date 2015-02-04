@@ -76,12 +76,14 @@ function reset(){
 function initBoard(){
 	stop();
 	updateSettings();
-
-	board = Array.matrix(DIM, DIM, false);
-	newBoard = Array.matrix(DIM, DIM, false);
+	updateBoardSize(DIM)
 	randomize();
-	
 	draw();
+}
+
+function updateBoardSize(dim){
+	board = Array.matrix(dim, dim, false);
+	newBoard = Array.matrix(dim, dim, false);
 }
 
 // get settings from html
@@ -93,6 +95,8 @@ function updateSettings(){
 	DIM = boardDimWithoutLines / cellDim;
 	lineOffset = (lineWidth * (DIM - 1));
 	boardDimWithLines = boardDimWithoutLines + lineOffset;
+
+	updateBoardSize(DIM);
 
 	canvas.width = canvas.height = boardDimWithLines;
 	context.clearRect(0, 0, canvas.width, canvas.height);
