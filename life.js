@@ -3,6 +3,7 @@
 
 var boardDimWithoutLines = 600;
 var lineWidth = 1;
+var running = false;
 
 var canvas;
 var context;
@@ -39,18 +40,19 @@ Array.matrix = function(numrows, numcols, initial){
 /* user input functions */
 
 function start(){
-	console.log("Starting...");
-	interval = setInterval(step, delta);
+	if(!running){
+		console.log("Starting...");
+		interval = setInterval(step, delta);
+		running = true;
+	}
 }
 
 function stop(){
-	console.log("Stopping...");
-	clearTimeout(interval);
-}
-
-function resume(){
-	console.log("Resuming...");
-	interval = setInterval(step, delta);
+	if(running){
+		console.log("Stopping...");
+		clearInterval(interval);
+		running = false;
+	}
 }
 
 function setRandom(){
@@ -74,7 +76,6 @@ function reset(){
 
 // init the board
 function initBoard(){
-	stop();
 	updateSettings();
 	updateBoardSize(DIM)
 	randomize();
