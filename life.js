@@ -106,12 +106,6 @@ function updateSettings(){
 	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-// callback to run every second
-function step(){
-	updateBoard();
-	draw();
-}
-
 // randomize the board
 function randomize(){
 	clear();
@@ -145,7 +139,7 @@ function endMoveListener(event){
 // grabs the cordinates of the mouse click
 function getPosition(event)
 {
-	var xE = event.x - canvas.offsetLeft;;
+	var xE = event.x - canvas.offsetLeft;
 	var yE = event.y - canvas.offsetTop;
 
 	x = Math.floor(yE/(cellDim + lineWidth));
@@ -165,6 +159,13 @@ function showDensity(val){
 	$('#densityval').text(val + "%");
 }
 
+// callback to run every second
+function step(){
+	updateBoard();
+	draw();
+}
+
+// main draw function
 function draw(){
 	drawLines();
 	drawCells();
@@ -255,6 +256,13 @@ function processCell(x, y){
 	updateCell(count, x, y);
 }
 
+// use the old board to make them all happen simultaneously
+function isLive(x, y){
+	if(x < 0 || y < 0 || x > DIM - 1 || y > DIM - 1)
+		return false;
+	return board[x][y];
+}
+
 // update cell based on information found
 function updateCell(count, x, y){
 	if(board[x][y]){
@@ -269,11 +277,4 @@ function updateCell(count, x, y){
 			newBoard[x][y] = false;
 		}
 	}
-}
-
-// use the old board to make them all happen simultaneously
-function isLive(x, y){
-	if(x < 0 || y < 0 || x > DIM - 1 || y > DIM - 1)
-		return false;
-	return board[x][y];
 }

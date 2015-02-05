@@ -13,10 +13,18 @@
 	<div id="wrapper">
 		<div id="title">
 			<h2>The Game of Life</h2>
-			<p>View the code on <a href="https://github.com/svolpe43/GameOfLife">Github</a>.</p>
+			<p>View the code on <a href="https://github.com/svolpe43/GameOfLife">Github</a>.<br>
+			Based on <a href="http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conways Game of Life</a>.</p>
 		</div>
 		<div id="settings">
-			<h3>Settings</h3><hr>
+			<p>Rules of the Game</p>
+			<ul>
+				<li>Any live cell with fewer than two live neighbours dies, as if caused by under-population.
+				<li>Any live cell with two or three live neighbours lives on to the next generation.
+				<li>Any live cell with more than three live neighbours dies, as if by overcrowding.
+				<li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+			</ul><hr>
+			<h3>Settings</h3>
 			<p>Number of Cells</p>
 			<select class="styled-select" id="dim">
 				<option value="30">400</option>
