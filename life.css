@@ -48,28 +48,33 @@
 	height: 100px;
 }
 
-#resume{
-	
+#slow{
+	float: left;
+}
+
+#fast{
+	float: right;
 }
 
 .styled-select {
-   width: 50px;
-   height: 34px;
-   overflow: hidden;
-   border: 1px solid #ccc;
-   }
+	width: 100px;
+	height: 34px;
+	overflow: hidden;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+}
 
 .styled-select select {
-   background: transparent;
-   width: 268px;
-   padding: 5px;
-   font-size: 16px;
-   line-height: 1;
-   border: 0;
-   border-radius: 2;
-   height: 34px;
-   -webkit-appearance: none;
-  }
+	background: transparent;
+	width: 268px;
+	padding: 5px;
+	font-size: 16px;
+	line-height: 1;
+	border: 0;
+	border-radius: 2;
+	height: 34px;
+	-webkit-appearance: none;
+}
 
 .btn {
 	-webkit-border-radius: 9;

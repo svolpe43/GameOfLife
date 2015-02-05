@@ -17,17 +17,19 @@
 		</div>
 		<div id="settings">
 			<h3>Settings</h3><hr>
-			<p>Cell Dimensions (px)</p>
+			<p>Number of Cells</p>
 			<select class="styled-select" id="dim">
-				<option value="15">15</option>
-				<option value="20">20</option>
-				<option value="30">30</option>
-				<option value="50">50</option>
+				<option value="30">400</option>
+				<option value="20">900</option>
+				<option value="15">1600</option>
+				<option value="10">3600</option>
+				<option value="5">14400</option>
+				<option value="2">90000</option>
 			</select>
 			<hr>	
 			<p>Speed</p>
-			<input id="delta" type="range"  min="1" max="1000" value="100" onchange="showDelta(this.value)"/>
-			<span id="deltaval">250 ms</span><br><br>
+			<input id="delta" type="range"  min="-1000" max="-1" value="-100" onchange="showDelta(this.value)"/>
+			<span id="slow">Slow</span><span id="fast">Fast</span><br><br>
 			<hr>
 			<p>Randomize Density</p>
 			<input id="density" type="range"  min="1" max="100" value="20" onchange="showDensity(this.value)"/>

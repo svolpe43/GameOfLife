@@ -89,9 +89,12 @@ function updateBoardSize(dim){
 
 // get settings from html
 function updateSettings(){
-	delta = Number($("#delta").val());
+	delta = - Number($("#delta").val());
 	cellDim = Number($("#dim").val());
 	density = Number($("#density").val());
+
+	if(cellDim < 10)
+		lineWidth = 0;
 
 	DIM = boardDimWithoutLines / cellDim;
 	lineOffset = (lineWidth * (DIM - 1));
