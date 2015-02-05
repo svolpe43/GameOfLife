@@ -19,7 +19,7 @@ var density;
 
 $(document).ready(function(){
 	canvas = document.getElementById("discanvas");
-	canvas.addEventListener("mousedown", getPosition, false);
+	canvas.addEventListener("mousedown", handleClickEvent, false);
 	context = canvas.getContext("2d");
 	context.lineWidth = lineWidth;
 	initBoard();
@@ -37,7 +37,7 @@ Array.matrix = function(numrows, numcols, initial){
     return arr;
 }
 
-/* user input functions */
+/* GUI input */
 
 function start(){
 	if(!running){
@@ -74,37 +74,33 @@ function reset(){
 	draw();
 }
 
-// slider value viewer
 function showDelta(val){
 	delta = - Number(val);
 	console.log(delta);
-	if(running){
-		clearInterval(interval);
-		setInterval(step, delta);
-	}
+	stop();
+	start();
 	$('#deltaval').text(-val + " ms");
 }
 
-// slider value viewer
 function showDensity(val){
 	density = Number(val);
 	$('#densityval').text(val + "%");
 }
 
-// init the board
+/* interal use */
+
 function initBoard(){
 	updateSettings();
-	updateBoardSize(DIM)
+	updateBoardSize();
 	randomize();
 	draw();
 }
 
-function updateBoardSize(dim){
-	board = Array.matrix(dim, dim, false);
-	newBoard = Array.matrix(dim, dim, false);
+function updateBoardSize(){
+	board = Array.matrix(DIM, DIM, false);
+	newBoard = Array.matrix(DIM, DIM, false);
 }
 
-// get settings from html
 function updateSettings(){
 	delta = - Number($("#delta").val());
 	cellDim = Number($("#dim").val());
@@ -122,7 +118,6 @@ function updateSettings(){
 	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-// randomize the board
 function randomize(){
 	clear();
 	for(var i = 0; i < DIM; i++){
@@ -133,7 +128,6 @@ function randomize(){
 	}
 }
 
-// clear the board
 function clear(){
 	for(var i = 0; i < DIM; i++){
 		for(var j = 0; j < DIM; j++){
@@ -152,8 +146,7 @@ function endMoveListener(event){
 	canvas.removeEventListener("onmousemove", getPosition, false);
 }
 
-// grabs the cordinates of the mouse click
-function getPosition(event)
+function handleClickEvent(event)
 {
 	var xE = event.x - canvas.offsetLeft;
 	var yE = event.y - canvas.offsetTop  + $(document).scrollTop();
@@ -167,19 +160,16 @@ function getPosition(event)
 	draw();
 }
 
-// callback to run every second
 function step(){
 	updateBoard();
 	draw();
 }
 
-// main draw function
 function draw(){
 	drawLines();
 	drawCells();
 }
 
-// draw all of the cell lines
 function drawLines(){
 	context.fillStyle="#000000";
 	var offset = cellDim + lineWidth;
@@ -208,8 +198,6 @@ function drawLines(){
 	}
 }
 
-// draw all of the cells
-// ctx.fillRect(x, y, height, width);
 function drawCells(){
 	context.fillStyle="#9966ff";
 	var offset = cellDim + lineWidth;
@@ -228,11 +216,8 @@ function drawCells(){
 	}
 }
 
-// update the board
 function updateBoard(){
-
 	newBoard = Array.matrix(DIM, DIM, false);
-
 	for(var i = 0; i < DIM; i++){
 		for(var j = 0; j < DIM; j++){
 			processCell(i, j);
@@ -241,16 +226,6 @@ function updateBoard(){
 	board = newBoard.slice();
 }
 
-// used to copy the updated board into the board
-function copyBoard(copythis, intothis){
-	for(var i = 0; i < DIM; i++){
-		for(var j = 0; j < DIM; j++){
-			intothis[i][j] = copythis[i][j];
-		}
-	}
-}
-
-// process life information about current cell
 function processCell(x, y){
 	var count = 0;
 	for(var i = -1; i < 2; i++){
@@ -264,14 +239,12 @@ function processCell(x, y){
 	updateCell(count, x, y);
 }
 
-// use the old board to make them all happen simultaneously
 function isLive(x, y){
 	if(x < 0 || y < 0 || x > DIM - 1 || y > DIM - 1)
 		return false;
 	return board[x][y];
 }
 
-// update cell based on information found
 function updateCell(count, x, y){
 	if(board[x][y]){
 		if (count == 2 || count == 3)
