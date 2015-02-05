@@ -19,10 +19,10 @@
 		<div id="settings">
 			<p>Rules of the Game</p>
 			<ul>
-				<li>Any live cell with fewer than two live neighbours dies, as if caused by under-population.
-				<li>Any live cell with two or three live neighbours lives on to the next generation.
-				<li>Any live cell with more than three live neighbours dies, as if by overcrowding.
-				<li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+				<li>Any live cell with fewer than two live neighbours dies, as if caused by under-population.</li>
+				<li>Any live cell with two or three live neighbours lives on to the next generation.</li>
+				<li>Any live cell with more than three live neighbours dies, as if by overcrowding.</li>
+				<li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.</li>
 			</ul><hr>
 			<h3>Settings</h3>
 			<p>Number of Cells</p>
@@ -34,16 +34,16 @@
 				<option value="5">14400</option>
 				<option value="2">90000</option>
 			</select>
+			<button class="btn" onclick="update()">Update</button>
 			<hr>	
 			<p>Speed</p>
 			<input id="delta" type="range"  min="-1000" max="-1" value="-100" onchange="showDelta(this.value)"/>
-			<span id="slow">Slow</span><span id="fast">Fast</span><br><br>
+			<span id="slow">Slow</span><span id="deltaval">100 ms</span><span id="fast">Fast</span><br><br>
 			<hr>
 			<p>Randomize Density</p>
 			<input id="density" type="range"  min="1" max="100" value="20" onchange="showDensity(this.value)"/>
 			<span id="densityval">20%</span><br><br>
 			<hr>
-			<button class="btn" onclick="update()">Update</button>
 		</div>
 		<div id="canvas-div">
 			<canvas id="discanvas" width="628" height="628"></canvas>

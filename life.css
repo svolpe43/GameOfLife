@@ -1,5 +1,5 @@
 #wrapper{
-	width: 1200px;
+	width: 1025px;
 	overflow: hidden;
 	margin: 0 auto;
 }
@@ -46,6 +46,10 @@
 	margin-left: 100px;
 	margin-top: 10px;
 	height: 100px;
+}
+
+#deltaval{
+	margin-left: 100px;
 }
 
 #slow{

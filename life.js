@@ -74,6 +74,23 @@ function reset(){
 	draw();
 }
 
+// slider value viewer
+function showDelta(val){
+	delta = - Number(val);
+	console.log(delta);
+	if(running){
+		clearInterval(interval);
+		setInterval(step, delta);
+	}
+	$('#deltaval').text(-val + " ms");
+}
+
+// slider value viewer
+function showDensity(val){
+	density = Number(val);
+	$('#densityval').text(val + "%");
+}
+
 // init the board
 function initBoard(){
 	updateSettings();
@@ -93,8 +110,7 @@ function updateSettings(){
 	cellDim = Number($("#dim").val());
 	density = Number($("#density").val());
 
-	if(cellDim < 10)
-		lineWidth = 0;
+	lineWidth = (cellDim < 10) ? 0 : 1;
 
 	DIM = boardDimWithoutLines / cellDim;
 	lineOffset = (lineWidth * (DIM - 1));
@@ -140,23 +156,15 @@ function endMoveListener(event){
 function getPosition(event)
 {
 	var xE = event.x - canvas.offsetLeft;
-	var yE = event.y - canvas.offsetTop;
+	var yE = event.y - canvas.offsetTop  + $(document).scrollTop();
+	
+	console.log($(document).scrollTop());
 
 	x = Math.floor(yE/(cellDim + lineWidth));
 	y = Math.floor(xE/(cellDim + lineWidth));
 	
 	board[x][y] = (board[x][y]) ? false : true;
 	draw();
-}
-
-// slider value viewer
-function showDelta(val){
-	$('#deltaval').text(val + " ms");
-}
-
-// slider value viewer
-function showDensity(val){
-	$('#densityval').text(val + "%");
 }
 
 // callback to run every second
