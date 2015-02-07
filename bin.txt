@@ -1,0 +1,33 @@
+function mouseDown(event){
+	console.log("mouse down");
+	canvas.onmousemove = mouseMove;
+}
+
+function mouseMove(event){
+	console.log("mouse move");
+
+	var xE = event.x - canvas.offsetLeft + $(document).scrollLeft();
+	var yE = event.y - canvas.offsetTop  + $(document).scrollTop();
+
+	x = Math.floor(yE/(cellDim + lineWidth));
+	y = Math.floor(xE/(cellDim + lineWidth));
+	
+	console.log(x + ", " + y);
+
+	if(x != lastxcell || y != lastycell){
+		board[x][y] = (board[x][y]) ? false : true;
+		lastxcell = x;
+		lastycell = y;
+		draw();
+	}
+}
+
+function getCord(n){
+	var nE = n - canvas.offsetLeft + $(document).scrollLeft();
+	
+}
+
+function mouseUp(event){
+	console.log("mouse up");
+	canvas.onmousemove = null;
+}

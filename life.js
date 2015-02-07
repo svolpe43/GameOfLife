@@ -4,6 +4,8 @@
 var boardDimWithoutLines = 600;
 var lineWidth = 1;
 var running = false;
+var lastxcell = -1;
+var lastycell = -1;
 
 var canvas;
 var context;
@@ -16,10 +18,14 @@ var DIM;
 var lineOffset;
 var boardDimWithLines;
 var density;
+var patterns;
 
 $(document).ready(function(){
 	canvas = document.getElementById("discanvas");
-	canvas.addEventListener("mousedown", handleClickEvent, false);
+
+	canvas.onmousedown = mouseDown;
+	canvas.onmouseup = mouseUp;
+
 	context = canvas.getContext("2d");
 	context.lineWidth = lineWidth;
 	initBoard();
@@ -35,6 +41,13 @@ Array.matrix = function(numrows, numcols, initial){
       arr[i] = columns;
     }
     return arr;
+}
+
+function pattern(title, pattern){
+	this.title = title;
+	console.log("dim: " + cellDim);
+	this.dim = cellDim;
+	this.pattern = pattern.slice();
 }
 
 /* GUI input */
@@ -63,7 +76,7 @@ function setRandom(){
 
 function update(){
 	stop();
-	updateSettings();
+	updateSettingsFromUI();
 	randomize();
 	draw();
 }
@@ -87,26 +100,65 @@ function showDensity(val){
 	$('#densityval').text(val + "%");
 }
 
+function getPattern(index){
+	console.log("Changing pattern...");
+	stop();
+	updateSettingsFromPattern(patterns[index].dim);
+	board = patterns[index].pattern.slice();
+	draw();
+}
+
+function deletePattern(index){
+	patterns[index] = null;
+	savePatternCookie();
+	resetPatternUI();
+}
+
+function save(){
+	stop();
+	var title = prompt("What do you want to name it?");
+	if(title != null){
+		patterns[patterns.length] = new pattern(title, board.slice());
+		resetPatternUI();
+		savePatternCookie();
+	}else{
+		alert("You have to enter something.");
+	}
+}
+
+function getDefaultPatterns(){
+	patterns[patterns.length] = new pattern('Blinker', createBlinker(DIM).slice());
+	patterns[patterns.length] = new pattern('Snow Flake', createSnowflake(DIM).slice());
+	patterns[patterns.length] = new pattern('Explosion', createExplosion(DIM).slice());
+	savePatternCookie();
+	resetPatternUI();
+}
+
 /* interal use */
 
 function initBoard(){
-	updateSettings();
+	updateSettingsFromUI();
 	updateBoardSize();
+	getPatterns();
 	randomize();
 	draw();
 }
 
-function updateBoardSize(){
-	board = Array.matrix(DIM, DIM, false);
-	newBoard = Array.matrix(DIM, DIM, false);
-}
-
-function updateSettings(){
+function updateSettingsFromUI(){
 	delta = - Number($("#delta").val());
 	cellDim = Number($("#dim").val());
 	density = Number($("#density").val());
+	updateSettings();
+}
 
-	lineWidth = (cellDim < 10) ? 0 : 1;
+function updateSettingsFromPattern(dim){
+	
+	cellDim = dim;
+	updateSettings();
+}
+
+function updateSettings(){
+	lineWidth = (cellDim < 15) ? 0 : 1;
 
 	DIM = boardDimWithoutLines / cellDim;
 	lineOffset = (lineWidth * (DIM - 1));
@@ -116,6 +168,45 @@ function updateSettings(){
 
 	canvas.width = canvas.height = boardDimWithLines;
 	context.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function updateBoardSize(){
+	board = Array.matrix(DIM, DIM, false);
+	newBoard = Array.matrix(DIM, DIM, false);
+}
+
+function getPatterns(){
+	if($.cookie('patterns')){
+		patterns = JSON.parse($.cookie('patterns'));
+	}else if(localStorage.getItem('patterns')){
+		patterns = JSON.parse(localStorage.getItem('patterns'));
+	}else{
+		patterns = [];
+		patterns[0] = new pattern('Blinker', createBlinker(DIM).slice());
+		patterns[1] = new pattern('Snow Flake', createSnowflake(DIM).slice());
+		patterns[2] = new pattern('Explosion', createExplosion(DIM).slice());
+	}
+	resetPatternUI();
+}
+
+function savePatternCookie(){
+	console.log("saving to cookies");
+	$.removeCookie('patterns');
+	localStorage.removeItem('patterns');
+	$.cookie('patterns', JSON.stringify(patterns));
+	localStorage.setItem('patterns', JSON.stringify(patterns));
+}
+
+function resetPatternUI(){
+	$("#patterns").empty();
+	for(var i = 0; i < patterns.length; i++){
+		if(patterns[i] != null){
+			$("#patterns").append(
+				'<li><button class="btn" onclick="getPattern(' + i + ')">' + patterns[i].title + '</button>' +
+				'<button class="delete-btn" onclick="deletePattern(' + i + ')" style="background: #fff; border: none;">X</button></li>'
+			);
+		}
+	}
 }
 
 function randomize(){
@@ -129,35 +220,52 @@ function randomize(){
 }
 
 function clear(){
-	for(var i = 0; i < DIM; i++){
-		for(var j = 0; j < DIM; j++){
-			board[i][j] = false;
-		}
+	board = Array.matrix(DIM, DIM, false);
+}
+
+function mouseDown(event){
+	console.log("mouse down");
+
+	lastxcell = Math.floor(getCord(event.y, false)/(cellDim + lineWidth));
+	lastycell = Math.floor(getCord(event.x, true)/(cellDim + lineWidth));
+
+	console.log(lastxcell + ", " + lastycell);
+
+	board[lastxcell][lastycell] = (board[lastxcell][lastycell]) ? false : true;
+	draw();
+	
+	canvas.onmousemove = mouseMove;
+}
+
+function mouseMove(event){
+	console.log("mouse move");
+
+	x = Math.floor(getCord(event.y, false)/(cellDim + lineWidth));
+	y = Math.floor(getCord(event.x, true)/(cellDim + lineWidth));
+
+	// turn on mouse move when off canvas
+	if(x >= DIM || y >= DIM || x < 0 || y < 0){
+		canvas.onmousemove = null;
+		return;
+	}
+
+	if(x != lastxcell || y != lastycell){
+		board[x][y] = (board[x][y]) ? false : true;
+		lastxcell = x;
+		lastycell = y;
+		draw();
 	}
 }
 
-//TODO mouse drag over canvas
-function startMoveListener(event){
-	console.log("start");
-	canvas.addEventListener("onmousemove", getPosition, false);
-}
-function endMoveListener(event){
-	console.log("stop");
-	canvas.removeEventListener("onmousemove", getPosition, false);
+function mouseUp(event){
+	console.log("mouse up");
+	canvas.onmousemove = null;
 }
 
-function handleClickEvent(event)
-{
-	var xE = event.x - canvas.offsetLeft;
-	var yE = event.y - canvas.offsetTop  + $(document).scrollTop();
-	
-	console.log($(document).scrollTop());
-
-	x = Math.floor(yE/(cellDim + lineWidth));
-	y = Math.floor(xE/(cellDim + lineWidth));
-	
-	board[x][y] = (board[x][y]) ? false : true;
-	draw();
+function getCord(eventN, isX){
+	return canvasN = (isX) ? 
+		eventN - canvas.offsetLeft + $(document).scrollLeft() :
+		eventN - canvas.offsetTop + $(document).scrollTop();
 }
 
 function step(){
